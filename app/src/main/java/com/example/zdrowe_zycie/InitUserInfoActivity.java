@@ -60,7 +60,6 @@ public class InitUserInfoActivity extends AppCompatActivity {
                     default:
                         break;
                 }
-                //Toast.makeText(InitUserInfoActivity.this, "Płeć: " + sex, Toast.LENGTH_SHORT).show();
             }
         });
 

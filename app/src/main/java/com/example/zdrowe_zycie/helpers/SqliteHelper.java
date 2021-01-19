@@ -137,6 +137,7 @@ public final class SqliteHelper extends SQLiteOpenHelper {
         }else{
             selectQuery = "SELECT * FROM " + TABLE_STATS_WATER;
         }
+
         SQLiteDatabase db = this.getReadableDatabase();
         return db.rawQuery(selectQuery, null);
     }

@@ -35,6 +35,14 @@
         <item>Codzienna aktywność + praca</item>
     </string-array>
 
+    <string-array name="czas">
+        <item>Tydzień</item>
+        <item>2 tygodnie</item>
+        <item>Miesiąc</item>
+        <item>3 miesiące</item>
+        <item>Rok</item>
+    </string-array>
+
     <string-array name="factsWater">
         <item>Fact Water nr11111</item>
         <item>Fact Water nr22222</item>
