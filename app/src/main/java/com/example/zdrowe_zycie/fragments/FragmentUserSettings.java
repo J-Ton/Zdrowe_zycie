@@ -12,18 +12,13 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
-
 import androidx.constraintlayout.widget.ConstraintLayout;
-
 import com.example.zdrowe_zycie.MainActivity;
 import com.example.zdrowe_zycie.R;
 import com.example.zdrowe_zycie.helpers.SqliteHelper;
 import com.example.zdrowe_zycie.utils.AppUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.util.HashMap;
-
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 
@@ -33,15 +28,13 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
     private SharedPreferences sharedPref;
     private final Context mCtx;
     private Float physicalActivity;
-    private HashMap _$_findViewCache;
     private ConstraintLayout mainUserLayout;
     private RadioRealButtonGroup gender;
     private String sex, dateNow;
-    ;
     private Button buttonOk;
     private Spinner spiner;
     private SqliteHelper sqliteHelper;
-    private boolean myValues, flagEat;
+    private boolean myValues, flagEat, hot;
     private int item_id, currentWater, currentEat;
     private Switch custSwitch;
     private EditText et_weight, et_age, et_growth, et_cust_water, et_cust_aet;
@@ -89,7 +82,8 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
         et_age = age.getEditText();
         et_growth = growth.getEditText();
         item_id = this.sharedPref.getInt(AppUtils.getWorkTimeKey(), 0);
-        sex = this.sharedPref.getString(AppUtils.getSexKey().toString(), "");
+        sex = this.sharedPref.getString(AppUtils.getSexKey(), "Mężczyzna");
+        hot = this.sharedPref.getBoolean(AppUtils.getWeatherKey(), false);
         myValues = this.sharedPref.getBoolean(AppUtils.getMY_VALUES_KEY(), false);
 
         switch (sex) {
@@ -141,7 +135,6 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                     default:
                         break;
                 }
-                //Toast.makeText(mCtx, "Płeć: " + sex, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -159,6 +152,36 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                 ;
             }
         });
+
+        RadioRealButtonGroup weather = view.findViewById(R.id.radioGroup_weather);
+
+        if (hot == false)
+        {
+
+            weather.setPosition(0);
+        }
+        else
+        {
+            weather.setPosition(1);
+        }
+
+        weather.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
+            @Override
+            public void onClickedButton(RadioRealButton button, int position) {
+                switch (position) {
+                    case 0:
+                        hot = false;
+                        break;
+                    case 1:
+                        hot = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
+
 
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,6 +237,7 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                                 editor.putInt(AppUtils.getAgeKey(), Integer.parseInt(et_age.getText().toString()));
                                 editor.putInt(AppUtils.getWorkTimeKey(), (int) spiner.getSelectedItemId());
                                 editor.putString(AppUtils.getSexKey(), sex);
+                                editor.putBoolean(AppUtils.getWeatherKey(), hot);
                                 editor.putBoolean(AppUtils.getMY_VALUES_KEY(), myValues);
                                 if (custSwitch.isChecked()) {
                                     et_cust_aet = cust_aet.getEditText();
@@ -231,8 +255,8 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                                         sqliteHelper.updateTotalIntake(dateNow, Integer.parseInt(et_cust_aet.getText().toString()), true);
                                     }
                                 } else {
-                                    float water = AppUtils.calculateIntake(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),false);
-                                    float eat = AppUtils.calculateIntake(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),true);
+                                    float water = AppUtils.calculate(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),false, hot);
+                                    float eat = AppUtils.calculate(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),true, hot);
                                     if (currentWater == (int) water) {
 
                                     } else {

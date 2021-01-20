@@ -14,13 +14,10 @@ import android.media.AudioAttributes.Builder;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build.VERSION;
-
 import androidx.core.app.NotificationCompat;
-
 import com.example.zdrowe_zycie.MainActivity;
 import com.example.zdrowe_zycie.R;
 import com.example.zdrowe_zycie.utils.AppUtils;
-
 import java.util.Calendar;
 import java.util.Date;
 

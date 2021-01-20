@@ -4,11 +4,11 @@ import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import java.util.ArrayList;
 
-public final class ChartXValueFormatter extends ValueFormatter {
+public final class ChartFormatterUtils extends ValueFormatter {
 
     private final ArrayList dateArray;
 
-    public ChartXValueFormatter(ArrayList dateArray) {
+    public ChartFormatterUtils(ArrayList dateArray) {
         super();
         this.dateArray = dateArray;
     }

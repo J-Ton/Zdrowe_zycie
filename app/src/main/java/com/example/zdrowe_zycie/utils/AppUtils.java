@@ -7,23 +7,22 @@ public final class AppUtils {
 
     private static final String USERS_SHARED_PREF = "user_pref";
     private static final int PRIVATE_MODE = 0;
-
     private static String WEIGHT_KEY = "weight"; // waga użytkownika
     private static String AGE_KEY = "age"; // jego wiek
     private static String WORK_TIME_KEY = "worktime"; // aktywność fizyczna
     private static String SEX_KEY = "sex"; // płeć
     private static String GROWTH_KEY = "growth"; // wzrost
     private static String MY_VALUES_KEY = "myvalues"; // flaga dla własnych wartości wody i jedzenia
+    private static String FIRST_RUN_KEY = "firstrun"; // flaga pierwszego uruchomienia
+    public static String TOTAL_INTAKE_KEY_WATER = "totalintakewater"; // cel dla wody
+    public static String TOTAL_INTAKE_KEY_EAT = "totalintakeeat";  // cel dla jedzenia
+    private static String NOTIFICATION_STATUS_KEY = "notificationstatus"; // on/off powiadomień
+    private static String NOTIFICATION_FREQUENCY_KEY = "notificationfrequency"; // okres czasowy powiadomień
+    private static String NOTIFICATION_MSG_KEY = "notificationmsg";// tekst powiadomienia
+    private static String NOTIFICATION_TONE_URI_KEY = "notificationtone";// melodia powiadomienia
+    private static String WEATHER_KEY = "weather";// pogoda
 
-    private static String FIRST_RUN_KEY = "firstrun";
-    public static String TOTAL_INTAKE_KEY_WATER = "totalintakewater";
-    public static String TOTAL_INTAKE_KEY_EAT = "totalintakeeat";
-    private static String NOTIFICATION_STATUS_KEY = "notificationstatus";
-    private static String NOTIFICATION_FREQUENCY_KEY = "notificationfrequency";
-    private static String NOTIFICATION_MSG_KEY = "notificationmsg";
-    private static String NOTIFICATION_TONE_URI_KEY = "notificationtone";
-
-    public static final float calculateIntake(String sex, int weight, float workTime, int growth, int wiek, boolean flag) {
+    public static final float calculate(String sex, int weight, float workTime, int growth, int wiek, boolean flag, boolean hot) {
         float val;
         if (flag) {// dla jedzenia
             if (sex == "Mężczyzna") {
@@ -36,6 +35,9 @@ public final class AppUtils {
                 val = weight * 35;
             } else {
                 val = weight * 31;
+            }
+            if (hot){
+                val = (float) (val * 1.3);
             }
         }
         return val;
@@ -105,6 +107,10 @@ public final class AppUtils {
 
     public static final  String getFirstRunKey() {
         return AppUtils.FIRST_RUN_KEY;
+    }
+
+    public static final  String getWeatherKey() {
+        return AppUtils.WEATHER_KEY;
     }
 }
 

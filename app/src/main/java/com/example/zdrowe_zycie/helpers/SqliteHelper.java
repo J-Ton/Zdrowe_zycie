@@ -11,7 +11,7 @@ import com.example.zdrowe_zycie.R;
 public final class SqliteHelper extends SQLiteOpenHelper {
 
     private final Context context;
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
     private static final String DATABASE_NAME = "Food_and_Water_db";
     private static final String TABLE_STATS_WATER = "statsWater";
     private static final String TABLE_STATS_EAT = "statsEat";
@@ -48,19 +48,21 @@ public final class SqliteHelper extends SQLiteOpenHelper {
                 values.put(KEY_FACT, factsWater[i]);
                 db.insert(TABLE_FACTS_WATER, null, values);
             }
-            String[] factsEat = context.getResources().getStringArray(R.array.factsEat);
+            String[] factsEat = context.getResources().getStringArray(R.array.factsFood);
             length = factsEat.length;
             for (int i = 0; i < length; i++) {
                 values.put(KEY_FACT, factsEat[i]);
                 db.insert(TABLE_FACTS_EAT, null, values);
             }
         }
+
     }
 
     public void onUpgrade( SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATS_WATER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATS_EAT);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FACTS_WATER);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FACTS_EAT);
         this.onCreate(db);
     }
 

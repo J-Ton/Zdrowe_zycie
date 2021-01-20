@@ -5,11 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat.Builder;
-
 import com.example.zdrowe_zycie.R;
 import com.example.zdrowe_zycie.helpers.NotificationHelper;
 import com.example.zdrowe_zycie.helpers.SqliteHelper;

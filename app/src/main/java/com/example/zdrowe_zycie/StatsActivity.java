@@ -12,15 +12,13 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-
 import com.example.zdrowe_zycie.helpers.SqliteHelper;
 import com.example.zdrowe_zycie.utils.AppUtils;
-import com.example.zdrowe_zycie.utils.ChartXValueFormatter;
+import com.example.zdrowe_zycie.utils.ChartFormatterUtils;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -28,7 +26,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,7 +41,6 @@ public class StatsActivity extends AppCompatActivity {
     private SqliteHelper sqliteHelper;
     float[] percentList;
     int daysCount;
-
 
     ConstraintLayout mainLayout;
     WaveLoadingView LevelView;
@@ -64,20 +60,6 @@ public class StatsActivity extends AppCompatActivity {
         LevelView = findViewById(R.id.LevelView);
         spinner = findViewById(R.id.spinner);
 
-
-
-        if (flagEat == false) {
-            mainLayout.setBackgroundResource(R.drawable.ic_water_bg);
-            LevelView.setBorderColor(ResourcesCompat.getColor(getResources(), R.color.Blue, null));
-            LevelView.setWaveColor(ResourcesCompat.getColor(getResources(), R.color.BlueDark, null));
-            LevelView.setCenterTitleStrokeColor(ResourcesCompat.getColor(getResources(), R.color.BlueDark, null));
-        } else {
-            LevelView.setBorderColor(ResourcesCompat.getColor(getResources(), R.color.Orange, null));
-            LevelView.setWaveColor(ResourcesCompat.getColor(getResources(), R.color.OrangeDark, null));
-            LevelView.setCenterTitleStrokeColor(ResourcesCompat.getColor(getResources(), R.color.OrangeDark, null));
-            mainLayout.setBackgroundResource(R.drawable.ic_eat_bg);
-        }
-
         ImageView buttonBack = findViewById(R.id.btnBack);
         buttonBack.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -85,55 +67,11 @@ public class StatsActivity extends AppCompatActivity {
             }
         });
 
-        Cursor cursor = sqliteHelper.getAllStats(flagEat);
-        if (cursor.moveToFirst()) {
-            daysCount = cursor.getCount();
-            percentList = new float[daysCount];
-            for (int i = 0; i < daysCount; ++i) {
-                float percent = (float) cursor.getInt(2) / (float) cursor.getInt(3) * 100;
-                percentList[i] = percent;
-                cursor.moveToNext();
-            }
-        } else {
-            Toast.makeText(this, (CharSequence) "Empty", Toast.LENGTH_LONG).show();
-        }
-
-            TextView remainingIntake = findViewById(R.id.remainingIntake);
-            int remaining;
-            String unit;
-            if (flagEat) {
-                remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) -
-                        sqliteHelper.getIntook(AppUtils.getCurrentDate(), flagEat);
-                unit = "kkal";
-            } else {
-                remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) -
-                        sqliteHelper.getIntook(AppUtils.getCurrentDate(), flagEat);
-                unit = "ml";
-            }
-            if (remaining > 0) {
-                remainingIntake.setText(remaining + unit);
-            } else {
-                remainingIntake.setText("0" + unit);
-            }
-
-            TextView targetIntake = findViewById(R.id.targetIntake);
-            if (flagEat) {
-                targetIntake.setText(sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) + " kkal");
-            } else {
-                targetIntake.setText(sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) + " ml");
-            }
-
-            float summ = 0;
-            for (int i = 0; i < daysCount; ++i) {
-                summ += percentList[i];
-
-            }
-            int percentage = (int) (summ / daysCount);
-
-            WaveLoadingView WaveLoadingView = findViewById(R.id.LevelView);
-            WaveLoadingView.setCenterTitle("" + percentage + '%');
-            WaveLoadingView.setProgressValue((int) (percentage * 0.85));
-
+        setColors(flagEat);
+        analizeStats(flagEat);
+        setRemaining(flagEat);
+        setTarget(flagEat);
+        setAvgProgres();
         makeCraph(flagEat, 7);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -162,6 +100,76 @@ public class StatsActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parentView) {
             }
         });
+    }
+
+    private void analizeStats(boolean flagEat) {
+        Cursor cursor = sqliteHelper.getAllStats(flagEat);
+        if (cursor.moveToFirst()) {
+            daysCount = cursor.getCount();
+            percentList = new float[daysCount];
+            for (int i = 0; i < daysCount; ++i) {
+                float percent = (float) cursor.getInt(2) / (float) cursor.getInt(3) * 100;
+                percentList[i] = percent;
+                cursor.moveToNext();
+            }
+        } else {
+            Toast.makeText(this, (CharSequence) "Empty", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setColors(boolean flagEat) {
+        if (flagEat == false) {
+            mainLayout.setBackgroundResource(R.drawable.ic_water_bg);
+            LevelView.setBorderColor(ResourcesCompat.getColor(getResources(), R.color.Blue, null));
+            LevelView.setWaveColor(ResourcesCompat.getColor(getResources(), R.color.BlueDark, null));
+            LevelView.setCenterTitleStrokeColor(ResourcesCompat.getColor(getResources(), R.color.BlueDark, null));
+        } else {
+            LevelView.setBorderColor(ResourcesCompat.getColor(getResources(), R.color.Orange, null));
+            LevelView.setWaveColor(ResourcesCompat.getColor(getResources(), R.color.OrangeDark, null));
+            LevelView.setCenterTitleStrokeColor(ResourcesCompat.getColor(getResources(), R.color.OrangeDark, null));
+            mainLayout.setBackgroundResource(R.drawable.ic_eat_bg);
+        }
+    }
+
+    private void setAvgProgres() {
+        float summ = 0;
+        for (int i = 0; i < daysCount; ++i) {
+            summ += percentList[i];
+
+        }
+        int percentage = (int) (summ / daysCount);
+        WaveLoadingView WaveLoadingView = findViewById(R.id.LevelView);
+        WaveLoadingView.setCenterTitle("" + percentage + '%');
+        WaveLoadingView.setProgressValue((int) (percentage * 0.85));
+    }
+
+    private void setTarget(boolean flagEat) {
+        TextView targetIntake = findViewById(R.id.targetIntake);
+        if (flagEat) {
+            targetIntake.setText(sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) + " kkal");
+        } else {
+            targetIntake.setText(sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) + " ml");
+        }
+    }
+
+    private void setRemaining(boolean flagEat) {
+        TextView remainingIntake = findViewById(R.id.remainingIntake);
+        int remaining;
+        String unit;
+        if (flagEat) {
+            remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) -
+                    sqliteHelper.getIntook(AppUtils.getCurrentDate(), flagEat);
+            unit = "kkal";
+        } else {
+            remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) -
+                    sqliteHelper.getIntook(AppUtils.getCurrentDate(), flagEat);
+            unit = "ml";
+        }
+        if (remaining > 0) {
+            remainingIntake.setText(remaining + unit);
+        } else {
+            remainingIntake.setText("0" + unit);
+        }
     }
 
     void makeCraph(boolean flagEat, int period) {
@@ -227,7 +235,7 @@ public class StatsActivity extends AppCompatActivity {
             dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
             LineData lineData = new LineData(dataSet);
-            chart.getXAxis().setValueFormatter(new ChartXValueFormatter(dateArray));
+            chart.getXAxis().setValueFormatter(new ChartFormatterUtils(dateArray));
             chart.setData(lineData);
             chart.invalidate();
         }

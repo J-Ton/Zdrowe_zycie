@@ -190,5 +190,55 @@
             app:layout_constraintTop_toBottomOf="@+id/etAge" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <co.ceryle.radiorealbutton.RadioRealButtonGroup
+        android:id="@+id/radioGroup_weather"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:rrbg_animateDrawables_enter="overshoot"
+        app:rrbg_animateTexts_enter="overshoot"
+        app:rrbg_dividerColor="@color/colorBlack"
+        app:rrbg_dividerSize="1dp"
+        app:rrbg_radius="6dp"
+        app:rrbg_selectorColor="@android:color/black"
+        app:rrbg_selectorSize="6dp">
+
+        <co.ceryle.radiorealbutton.RadioRealButton
+            android:id="@+id/rb_cold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rrb_drawable="@drawable/ic_cold"
+            app:rrb_drawableGravity="top"
+            app:rrb_drawableHeight="30dp"
+            app:rrb_drawablePadding="-5dp"
+            app:rrb_drawableWidth="40dp"
+            app:rrb_ripple="false"
+            app:rrb_rippleColor="@color/colorBlack"
+            app:rrb_text="Zimno"
+            app:rrb_textColor="@color/colorBlack"
+            app:rrb_textGravity="center" />
+
+        <co.ceryle.radiorealbutton.RadioRealButton
+            android:id="@+id/rb_hot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:rrb_drawable="@drawable/ic_hot"
+            app:rrb_drawableGravity="top"
+            app:rrb_drawableHeight="30dp"
+            app:rrb_drawablePadding="-5dp"
+            app:rrb_drawableWidth="40dp"
+            app:rrb_ripple="false"
+            app:rrb_rippleColor="@color/colorBlack"
+            app:rrb_text="Gorąco"
+            app:rrb_textColor="@color/colorBlack"
+            app:rrb_textGravity="center"
+            tools:layout_editor_absoluteX="190dp" />
+
+    </co.ceryle.radiorealbutton.RadioRealButtonGroup>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

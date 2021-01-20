@@ -30,7 +30,8 @@ public class InitUserInfoActivity extends AppCompatActivity {
     private InputMethodManager imm;
     private ConstraintLayout parent;
     private SharedPreferences sharedPref;
-    private RadioRealButtonGroup gender;
+    private RadioRealButtonGroup gender, weather;
+    private boolean hot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,14 +64,32 @@ public class InitUserInfoActivity extends AppCompatActivity {
             }
         });
 
+        weather = findViewById(R.id.radioGroup_weather);
+
+        weather.setPosition(0);
+
+        weather.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
+            @Override
+            public void onClickedButton(RadioRealButton button, int position) {
+                switch (position) {
+                    case 0:
+                        hot = false;
+                        break;
+                    case 1:
+                        hot = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
+
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 parent = (ConstraintLayout) findViewById(R.id.init_user_info_parent_layout);
                 imm.hideSoftInputFromWindow(parent.getWindowToken(), 0);
-
-
                 et_weight = weight.getEditText();
                 et_growth = growth.getEditText();
                 et_age = age.getEditText();
@@ -116,8 +135,8 @@ public class InitUserInfoActivity extends AppCompatActivity {
                             if (Integer.parseInt(et_growth.getText().toString()) > 49 && Integer.parseInt(et_growth.getText().toString()) < 291) {
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 double water,eat;
-                                water = AppUtils.calculateIntake(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),false);
-                                eat = AppUtils.calculateIntake(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),true);
+                                water = AppUtils.calculate(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),false, hot);
+                                eat = AppUtils.calculate(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),true, hot);
                                 editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), (int) water);
                                 editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), (int) eat);
                                 editor.putInt(AppUtils.getWeightKey(), Integer.parseInt(et_weight.getText().toString()));
@@ -125,6 +144,7 @@ public class InitUserInfoActivity extends AppCompatActivity {
                                 editor.putInt(AppUtils.getAgeKey(), Integer.parseInt(et_age.getText().toString()));
                                 editor.putInt(AppUtils.getWorkTimeKey(), (int) workTime.getSelectedItemId());
                                 editor.putString(AppUtils.getSexKey(), sex);
+                                editor.putBoolean(AppUtils.getWeatherKey(), hot);
                                 editor.putBoolean(AppUtils.getMY_VALUES_KEY(), false);
                                 editor.putBoolean(AppUtils.getFirstRunKey(), false);
                                 editor.apply();

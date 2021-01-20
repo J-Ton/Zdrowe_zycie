@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 
 import com.example.zdrowe_zycie.recievers.BootReceiver;
 import com.example.zdrowe_zycie.recievers.NotifierReceiver;
-
 import java.util.concurrent.TimeUnit;
 
 public final class AlarmHelper {
