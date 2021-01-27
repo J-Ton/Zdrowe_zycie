@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             totalIntake = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1);
         }
-        inTook = sqliteHelper.getIntook(dateNow, flagEat);
+        inTook = sqliteHelper.getIntake(dateNow, flagEat);
         setWaterLevel(inTook, totalIntake);
     }
 
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             public final void onClick(View it) {
                 if (selectedOption != 0) {
                     if (inTook * 100 / totalIntake <= 140) {
-                        if (sqliteHelper.addIntook(dateNow, selectedOption, flagEat) > 0) {
+                        if (sqliteHelper.addIntake(dateNow, selectedOption, flagEat) > 0) {
                             inTook += selectedOption;
                             setWaterLevel(inTook, totalIntake);
                         }

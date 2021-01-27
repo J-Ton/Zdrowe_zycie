@@ -24,7 +24,7 @@ public final class NotifierReceiver extends BroadcastReceiver {
                 context.getResources().getString(R.string.pref_notification_message_value)
         );
         SqliteHelper sqliteHelper = new SqliteHelper(context);
-        int Intook = sqliteHelper.getIntook(AppUtils.getCurrentDate(),false);
+        int Intook = sqliteHelper.getIntake(AppUtils.getCurrentDate(),false);
         int Left = sqliteHelper.getIntakeWater(AppUtils.getCurrentDate()) - Intook;
         String messageToShow = "Wypiłeś dzisiaj " + Intook + " ml, do celu "+ Left +" ml";
         NotificationHelper nHelper = new NotificationHelper(context);

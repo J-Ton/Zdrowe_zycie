@@ -94,7 +94,7 @@ public final class NotificationHelper {
     private final boolean shallNotify() {
         SharedPreferences prefs = context.getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
         SqliteHelper sqliteHelper = new SqliteHelper(context);
-        int percent = sqliteHelper.getIntook(AppUtils.getCurrentDate(),false) * 100 /
+        int percent = sqliteHelper.getIntake(AppUtils.getCurrentDate(),false) * 100 /
                 prefs.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1);
         boolean doNotDisturbOff = true;
             Date now = Calendar.getInstance().getTime();

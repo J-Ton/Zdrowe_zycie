@@ -151,7 +151,7 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
             public final void onClick(View it) {
                 Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION);
-                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select ringtone for notifications:");
+                intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Wybierz melodię:");
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
                 intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, currentToneUri);
@@ -167,7 +167,7 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
                 notificMsg = ((TextInputLayout) view.findViewById(R.id.etNotificationText)).getEditText().getText().toString();
                 if (TextUtils.isEmpty(notificMsg)) {
                     Toast.makeText(context,
-                            (CharSequence) "Please a notification message",
+                            (CharSequence) "Wpisz treść powiadomień",
                             Toast.LENGTH_SHORT
                     ).show();
                 } else {

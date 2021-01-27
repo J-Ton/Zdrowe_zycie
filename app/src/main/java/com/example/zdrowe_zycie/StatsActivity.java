@@ -158,11 +158,11 @@ public class StatsActivity extends AppCompatActivity {
         String unit;
         if (flagEat) {
             remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) -
-                    sqliteHelper.getIntook(AppUtils.getCurrentDate(), flagEat);
+                    sqliteHelper.getIntake(AppUtils.getCurrentDate(), flagEat);
             unit = "kkal";
         } else {
             remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) -
-                    sqliteHelper.getIntook(AppUtils.getCurrentDate(), flagEat);
+                    sqliteHelper.getIntake(AppUtils.getCurrentDate(), flagEat);
             unit = "ml";
         }
         if (remaining > 0) {

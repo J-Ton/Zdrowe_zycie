@@ -19,7 +19,7 @@ public final class SqliteHelper extends SQLiteOpenHelper {
     private static final String TABLE_FACTS_EAT = "FactsEat";
     private static final String KEY_ID = "id";
     private static final String KEY_DATE = "date";
-    private static final String KEY_INTOOK = "intook";
+    private static final String KEY_INTAKE = "intook";
     private static final String KEY_TOTAL_INTAKE = "totalintake";
     private static final String KEY_FACT= "fact";
 
@@ -29,8 +29,8 @@ public final class SqliteHelper extends SQLiteOpenHelper {
     }
 
     public void onCreate( SQLiteDatabase db) {
-        String CREATE_STATS_TABLE_WATER = "CREATE TABLE " + TABLE_STATS_WATER + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DATE + " TEXT UNIQUE," + KEY_INTOOK + " INT," + KEY_TOTAL_INTAKE + " INT" + ")";
-        String CREATE_STATS_TABLE_EAT = "CREATE TABLE " + TABLE_STATS_EAT + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DATE + " TEXT UNIQUE," + KEY_INTOOK + " INT," + KEY_TOTAL_INTAKE + " INT" + ")";
+        String CREATE_STATS_TABLE_WATER = "CREATE TABLE " + TABLE_STATS_WATER + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DATE + " TEXT UNIQUE," + KEY_INTAKE + " INT," + KEY_TOTAL_INTAKE + " INT" + ")";
+        String CREATE_STATS_TABLE_EAT = "CREATE TABLE " + TABLE_STATS_EAT + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DATE + " TEXT UNIQUE," + KEY_INTAKE + " INT," + KEY_TOTAL_INTAKE + " INT" + ")";
         String CREATE_TABLE_FACTS_WATER = "CREATE TABLE " + TABLE_FACTS_WATER + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_FACT + " TEXT" + ")";
         String CREATE_TABLE_FACTS_EAT = "CREATE TABLE " + TABLE_FACTS_EAT + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_FACT + " TEXT" + ")";
         if (db != null) {
@@ -66,11 +66,11 @@ public final class SqliteHelper extends SQLiteOpenHelper {
         this.onCreate(db);
     }
 
-    public final long addAll( String date, int intook, int totalintake, boolean flagEat) {
+    public final long addAll( String date, int intake, int totalintake, boolean flagEat) {
         if (this.checkExistance(date, flagEat) == 0) {
             ContentValues values = new ContentValues();
             values.put(KEY_DATE, date);
-            values.put(KEY_INTOOK, intook);
+            values.put(KEY_INTAKE, intake);
             values.put(KEY_TOTAL_INTAKE, totalintake);
             SQLiteDatabase db = this.getWritableDatabase();
             long response;
@@ -86,26 +86,26 @@ public final class SqliteHelper extends SQLiteOpenHelper {
         }
     }
 
-    public final int getIntook( String date, boolean flagEat) {
+    public final int getIntake(String date, boolean flagEat) {
         String selectQuery;
         if(flagEat){
-            selectQuery = "SELECT " + KEY_INTOOK + " FROM " + TABLE_STATS_EAT + " WHERE " + KEY_DATE + " = ?";
+            selectQuery = "SELECT " + KEY_INTAKE + " FROM " + TABLE_STATS_EAT + " WHERE " + KEY_DATE + " = ?";
         }else{
-            selectQuery = "SELECT " + KEY_INTOOK + " FROM " + TABLE_STATS_WATER + " WHERE " + KEY_DATE + " = ?";
+            selectQuery = "SELECT " + KEY_INTAKE + " FROM " + TABLE_STATS_WATER + " WHERE " + KEY_DATE + " = ?";
         }
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor it = db.rawQuery(selectQuery, new String[]{date});
         if (it.moveToFirst()) {
-            return it.getInt(it.getColumnIndex(KEY_INTOOK));
+            return it.getInt(it.getColumnIndex(KEY_INTAKE));
         }
         return 0;
     }
 
-    public final int addIntook( String date, int selectedOption, boolean flagEat) {
-        int intook = this.getIntook(date, flagEat);
+    public final int addIntake(String date, int selectedOption, boolean flagEat) {
+        int intook = this.getIntake(date, flagEat);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(KEY_INTOOK, intook + selectedOption);
+        contentValues.put(KEY_INTAKE, intook + selectedOption);
         int response;
         if(flagEat){
             response = db.update(TABLE_STATS_EAT, contentValues, KEY_DATE + " = ?", new String[]{date});
@@ -119,9 +119,9 @@ public final class SqliteHelper extends SQLiteOpenHelper {
     public final int checkExistance( String date, boolean flagEat) {
         String selectQuery;
         if(flagEat){
-            selectQuery = "SELECT " + KEY_INTOOK + " FROM " + TABLE_STATS_EAT + " WHERE " + KEY_DATE + " = ?";
+            selectQuery = "SELECT " + KEY_INTAKE + " FROM " + TABLE_STATS_EAT + " WHERE " + KEY_DATE + " = ?";
         }else{
-            selectQuery = "SELECT " + KEY_INTOOK + " FROM " + TABLE_STATS_WATER + " WHERE " + KEY_DATE + " = ?";
+            selectQuery = "SELECT " + KEY_INTAKE + " FROM " + TABLE_STATS_WATER + " WHERE " + KEY_DATE + " = ?";
         }
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor it = db.rawQuery(selectQuery, new String[]{date});

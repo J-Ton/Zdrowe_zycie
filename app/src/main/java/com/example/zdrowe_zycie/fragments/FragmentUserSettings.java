@@ -149,7 +149,6 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                     cust_aet.setEnabled(false);
                     myValues = false;
                 }
-                ;
             }
         });
 
