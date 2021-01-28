@@ -19,10 +19,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
+
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.example.zdrowe_zycie.fragments.FragmentNotificationSettings;
@@ -32,7 +34,9 @@ import com.example.zdrowe_zycie.helpers.SqliteHelper;
 import com.example.zdrowe_zycie.utils.AppUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
+
 import java.util.Random;
+
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 import params.com.stepprogressview.StepProgressView;
@@ -89,20 +93,19 @@ public class MainActivity extends AppCompatActivity {
         dateNow = AppUtils.getCurrentDate();
         facts_view = findViewById(R.id.Facts_view);
 
-        sharedPref = getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
+        sharedPref = getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
         sqliteHelper = new SqliteHelper(this);
         cursorFactsEat = sqliteHelper.getFacts(true);
         cursorFactsWater = sqliteHelper.getFacts(false);
         setRandomFact(cursorFactsEat);
         setRandomFact(cursorFactsWater);
         if (flagEat) {
-            totalIntake = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1);
+            totalIntake = sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 1);
         } else {
-            totalIntake = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1);
+            totalIntake = sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 1);
         }
 
-        if(sharedPref.getBoolean(AppUtils.getFirstRunKey(),true))
-        {
+        if (sharedPref.getBoolean(AppUtils.FIRST_RUN_KEY, true)) {
             startActivity(new Intent(this, InitUserInfoActivity.class));
             this.finish();
         }
@@ -111,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateValues(boolean flagEat) {
         if (flagEat) {
-            totalIntake = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1);
+            totalIntake = sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 1);
         } else {
-            totalIntake = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1);
+            totalIntake = sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 1);
         }
         inTook = sqliteHelper.getIntake(dateNow, flagEat);
         setWaterLevel(inTook, totalIntake);
@@ -127,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
         ImageButton ButtonUserSettings = findViewById(R.id.ButtonUserSettings);
         ButtonUserSettings.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                FragmentUserSettings Fragment = new FragmentUserSettings((Context)MainActivity.this);
+                FragmentUserSettings Fragment = new FragmentUserSettings((Context) MainActivity.this);
                 Bundle args = new Bundle();
                 args.putBoolean("flagEat", flagEat);
                 Fragment.setArguments(args);
@@ -185,19 +188,19 @@ public class MainActivity extends AppCompatActivity {
                 true
         );
 
-        notificStatus = sharedPref.getBoolean(AppUtils.getNOTIFICATION_STATUS_KEY(), true);
+        notificStatus = sharedPref.getBoolean(AppUtils.NOTIFICATION_STATUS_KEY, true);
         AlarmHelper alarm = new AlarmHelper();
         if (!alarm.checkAlarm(this) && notificStatus) {
             alarm.setAlarm(
                     this,
-                    Long.valueOf(sharedPref.getInt(AppUtils.getNOTIFICATION_FREQUENCY_KEY(), 30))
+                    Long.valueOf(sharedPref.getInt(AppUtils.NOTIFICATION_FREQUENCY_KEY, 30))
             );
         }
 
         sqliteHelper.addAll(dateNow, 0, this.totalIntake, true);
         sqliteHelper.addAll(dateNow, 0, this.totalIntake, false);
-        sqliteHelper.updateTotalIntake(dateNow, sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1), true);
-        sqliteHelper.updateTotalIntake(dateNow, sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1), false);
+        sqliteHelper.updateTotalIntake(dateNow, sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 1), true);
+        sqliteHelper.updateTotalIntake(dateNow, sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 1), false);
 
         updateValues(flagEat);
 
@@ -213,16 +216,9 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Co za duzo to niezdrowo!", Toast.LENGTH_LONG).show();
 
                     }
-
                     selectedOption = 0;
                     tvCustom.setText("Custom");
-                    icon1.setBackground(getDrawable(outValue.resourceId));
-                    icon2.setBackground(getDrawable(outValue.resourceId));
-                    icon3.setBackground(getDrawable(outValue.resourceId));
-                    icon4.setBackground(getDrawable(outValue.resourceId));
-                    icon5.setBackground(getDrawable(outValue.resourceId));
-                    iconCustom.setBackground(getDrawable(outValue.resourceId));
-
+                    setIconBackground(0);
                 } else {
                     YoYo.with(Techniques.Shake)
                             .duration(700)
@@ -241,12 +237,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     selectedOption = 100;
                 }
-                icon1.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
-                icon2.setBackground(getDrawable(outValue.resourceId));
-                icon3.setBackground(getDrawable(outValue.resourceId));
-                icon4.setBackground(getDrawable(outValue.resourceId));
-                icon5.setBackground(getDrawable(outValue.resourceId));
-                iconCustom.setBackground(getDrawable(outValue.resourceId));
+                setIconBackground(1);
 
             }
         });
@@ -255,12 +246,7 @@ public class MainActivity extends AppCompatActivity {
             public final void onClick(View it) {
 
                 selectedOption = 150;
-                icon1.setBackground(getDrawable(outValue.resourceId));
-                icon2.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
-                icon3.setBackground(getDrawable(outValue.resourceId));
-                icon4.setBackground(getDrawable(outValue.resourceId));
-                icon5.setBackground(getDrawable(outValue.resourceId));
-                iconCustom.setBackground(getDrawable(outValue.resourceId));
+                setIconBackground(2);
 
             }
         });
@@ -273,12 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     selectedOption = 300;
                 }
-                icon1.setBackground(getDrawable(outValue.resourceId));
-                icon2.setBackground(getDrawable(outValue.resourceId));
-                icon3.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
-                icon4.setBackground(getDrawable(outValue.resourceId));
-                icon5.setBackground(getDrawable(outValue.resourceId));
-                iconCustom.setBackground(getDrawable(outValue.resourceId));
+                setIconBackground(3);
 
             }
         });
@@ -290,12 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     selectedOption = 500;
                 }
-                icon1.setBackground(getDrawable(outValue.resourceId));
-                icon2.setBackground(getDrawable(outValue.resourceId));
-                icon3.setBackground(getDrawable(outValue.resourceId));
-                icon4.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
-                icon5.setBackground(getDrawable(outValue.resourceId));
-                iconCustom.setBackground(getDrawable(outValue.resourceId));
+                setIconBackground(4);
 
             }
         });
@@ -307,12 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     selectedOption = 1000;
                 }
-                icon1.setBackground(getDrawable(outValue.resourceId));
-                icon2.setBackground(getDrawable(outValue.resourceId));
-                icon3.setBackground(getDrawable(outValue.resourceId));
-                icon4.setBackground(getDrawable(outValue.resourceId));
-                icon5.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
-                iconCustom.setBackground(getDrawable(outValue.resourceId));
+                setIconBackground(5);
 
             }
         });
@@ -341,12 +312,7 @@ public class MainActivity extends AppCompatActivity {
                 AlertDialog alertDialog = alertDialogBuilder.create();
                 alertDialog.show();
 
-                icon1.setBackground(getDrawable(outValue.resourceId));
-                icon2.setBackground(getDrawable(outValue.resourceId));
-                icon3.setBackground(getDrawable(outValue.resourceId));
-                icon4.setBackground(getDrawable(outValue.resourceId));
-                icon5.setBackground(getDrawable(outValue.resourceId));
-                iconCustom.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                setIconBackground(6);
             }
         });
     }
@@ -451,6 +417,37 @@ public class MainActivity extends AppCompatActivity {
             facts_view.setText((CharSequence) fact);
         } else {
             Toast.makeText(this, (CharSequence) "Empty table", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void setIconBackground(int icon) {
+        icon1.setBackground(getDrawable(outValue.resourceId));
+        icon2.setBackground(getDrawable(outValue.resourceId));
+        icon3.setBackground(getDrawable(outValue.resourceId));
+        icon4.setBackground(getDrawable(outValue.resourceId));
+        icon5.setBackground(getDrawable(outValue.resourceId));
+        iconCustom.setBackground(getDrawable(outValue.resourceId));
+        switch (icon){
+            case 1:
+                icon1.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                break;
+            case 2:
+                icon2.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                break;
+            case 3:
+                icon3.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                break;
+            case 4:
+                icon4.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                break;
+            case 5:
+                icon5.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                break;
+            case 6:
+                iconCustom.setBackground(getDrawable(R.drawable.splash_bg_gradiant));
+                break;
+            default:
+                break;
         }
     }
 }

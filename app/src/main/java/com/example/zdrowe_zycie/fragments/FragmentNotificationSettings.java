@@ -1,7 +1,6 @@
 package com.example.zdrowe_zycie.fragments;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,35 +8,20 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
-import android.os.Parcelable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
-import com.example.zdrowe_zycie.MainActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.zdrowe_zycie.R;
 import com.example.zdrowe_zycie.helpers.AlarmHelper;
 import com.example.zdrowe_zycie.utils.AppUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.HashMap;
-
 import co.ceryle.radiorealbutton.RadioRealButton;
 import co.ceryle.radiorealbutton.RadioRealButtonGroup;
 
@@ -82,19 +66,19 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        sharedPref = context.getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
+        sharedPref = context.getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
 
 
         EditText NotificationText = ((TextInputLayout) view.findViewById(R.id.etNotificationText)).getEditText();
         if (NotificationText != null) {
             NotificationText.setText(sharedPref.getString(
-                    AppUtils.getNOTIFICATION_MSG_KEY(),
+                    AppUtils.NOTIFICATION_MSG_KEY,
                     context.getResources().getString(R.string.pref_notification_message_value)
             ));
         }
 
         currentToneUri = sharedPref.getString(
-                AppUtils.getNOTIFICATION_TONE_URI_KEY(),
+                AppUtils.NOTIFICATION_TONE_URI_KEY,
                 RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString()
         );
         EditText Ringtone = ((TextInputLayout) view.findViewById(R.id.etRingtone)).getEditText();
@@ -124,7 +108,7 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
             }
         }));
 
-        notificFrequency = sharedPref.getInt(AppUtils.getNOTIFICATION_FREQUENCY_KEY(), 30);
+        notificFrequency = sharedPref.getInt(AppUtils.NOTIFICATION_FREQUENCY_KEY, 30);
         switch (notificFrequency) {
             case 30:
                 ButtonNotificFrequency.setPosition(0);
@@ -140,7 +124,7 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
                 ButtonNotificFrequency.setPosition(0);
         }
 
-        notificStatus = sharedPref.getBoolean(AppUtils.getNOTIFICATION_STATUS_KEY(), true);
+        notificStatus = sharedPref.getBoolean(AppUtils.NOTIFICATION_STATUS_KEY, true);
         if (notificStatus) {
             ((Switch) view.findViewById(R.id.switchNotification)).setChecked(true);
         } else {
@@ -172,9 +156,9 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
                     ).show();
                 } else {
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString(AppUtils.getNOTIFICATION_MSG_KEY(), notificMsg);
-                    editor.putInt(AppUtils.getNOTIFICATION_FREQUENCY_KEY(), notificFrequency);
-                    editor.putBoolean(AppUtils.getNOTIFICATION_STATUS_KEY(), notificStatus);
+                    editor.putString(AppUtils.NOTIFICATION_MSG_KEY, notificMsg);
+                    editor.putInt(AppUtils.NOTIFICATION_FREQUENCY_KEY, notificFrequency);
+                    editor.putBoolean(AppUtils.NOTIFICATION_STATUS_KEY, notificStatus);
                     editor.apply();
 
 
@@ -183,7 +167,7 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
                         alarmHelper.cancelAlarm(context);
                         alarmHelper.setAlarm(
                                 context,
-                                sharedPref.getInt(AppUtils.getNOTIFICATION_FREQUENCY_KEY(), 30)
+                                sharedPref.getInt(AppUtils.NOTIFICATION_FREQUENCY_KEY, 30)
                         );
                         Toast.makeText(
                                 context,
@@ -208,7 +192,7 @@ public class FragmentNotificationSettings extends BottomSheetDialogFragment {
         if (resultCode == Activity.RESULT_OK && requestCode == 999) {
             Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
             currentToneUri = uri.toString();
-            sharedPref.edit().putString(AppUtils.getNOTIFICATION_TONE_URI_KEY(), this.currentToneUri).apply();
+            sharedPref.edit().putString(AppUtils.NOTIFICATION_TONE_URI_KEY, this.currentToneUri).apply();
             Ringtone ringtone = RingtoneManager.getRingtone(context, uri);
             ((TextInputLayout) view1.findViewById(R.id.etRingtone)).getEditText().setText(ringtone.getTitle(context));
         }

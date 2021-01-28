@@ -28,8 +28,7 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
     private SharedPreferences sharedPref;
     private final Context mCtx;
     private Float physicalActivity;
-    private ConstraintLayout mainUserLayout;
-    private RadioRealButtonGroup gender;
+    private RadioRealButtonGroup gender, weather;
     private String sex, dateNow;
     private Button buttonOk;
     private Spinner spiner;
@@ -39,7 +38,6 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
     private Switch custSwitch;
     private EditText et_weight, et_age, et_growth, et_cust_water, et_cust_aet;
     private TextInputLayout weight, age, growth, cust_water, cust_aet;
-    private StringBuilder sBilder1, sBilder2, sBilder3, sBilder4, sBilder5;
 
     public FragmentUserSettings(Context mCtx) {
         this.mCtx = mCtx;
@@ -51,7 +49,7 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
         Bundle args = getArguments();
         flagEat = args.getBoolean("flagEat", false);
         View view = inflater.inflate(R.layout.fragment_user_settings, container, false);
-        mainUserLayout = view.findViewById(R.id.mainUserLayout);
+        ConstraintLayout mainUserLayout = view.findViewById(R.id.mainUserLayout);
         if (flagEat == false) {
             mainUserLayout.setBackgroundResource(R.drawable.blue_bg);
         } else {
@@ -64,63 +62,7 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        dateNow = AppUtils.getCurrentDate();
-        buttonOk = view.findViewById(R.id.buttonSettingsOK);
-        sharedPref = mCtx.getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
-        weight = view.findViewById(R.id.etWeight);
-        age = view.findViewById(R.id.etAge);
-        growth = view.findViewById(R.id.etGrowth2);
-        gender = view.findViewById(R.id.radioGroup_settings);
-        spiner = view.findViewById(R.id.physicalActivity_settings);
-        custSwitch = view.findViewById(R.id.switchCustom);
-        cust_water = view.findViewById(R.id.etCustom_water);
-        cust_aet = view.findViewById(R.id.etCustom_eat);
-
-        et_cust_aet = cust_aet.getEditText();
-        et_cust_water = cust_water.getEditText();
-        et_weight = weight.getEditText();
-        et_age = age.getEditText();
-        et_growth = growth.getEditText();
-        item_id = this.sharedPref.getInt(AppUtils.getWorkTimeKey(), 0);
-        sex = this.sharedPref.getString(AppUtils.getSexKey(), "Mężczyzna");
-        hot = this.sharedPref.getBoolean(AppUtils.getWeatherKey(), false);
-        myValues = this.sharedPref.getBoolean(AppUtils.getMY_VALUES_KEY(), false);
-
-        switch (sex) {
-            case "Mężczyzna":
-                gender.setPosition(0);
-                break;
-            case "Kobieta":
-                gender.setPosition(1);
-                break;
-            default:
-                break;
-        }
-
-        if (myValues) {
-            custSwitch.setChecked(true);
-            cust_water.setEnabled(true);
-            cust_aet.setEnabled(true);
-        } else {
-            custSwitch.setChecked(false);
-            cust_water.setEnabled(false);
-            cust_aet.setEnabled(false);
-        }
-
-        currentWater = this.sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 0);
-        currentEat = this.sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 0);
-        sBilder1 = (new StringBuilder()).append("");
-        et_weight.setText((CharSequence) sBilder1.append(this.sharedPref.getInt(AppUtils.getWeightKey(), 0)).toString());
-        sBilder2 = (new StringBuilder()).append("");
-        et_age.setText((CharSequence) sBilder2.append(this.sharedPref.getInt(AppUtils.getAgeKey(), 0)).toString());
-        sBilder3 = (new StringBuilder()).append("");
-        et_growth.setText((CharSequence) sBilder3.append(this.sharedPref.getInt(AppUtils.getGrowthKey(), 0)).toString());
-        sBilder4 = (new StringBuilder()).append("");
-        et_cust_water.setText((CharSequence) sBilder4.append(this.sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 0)).toString());
-        sBilder5 = (new StringBuilder()).append("");
-        et_cust_aet.setText((CharSequence) sBilder5.append(this.sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 0)).toString());
-
-        spiner.setSelection(item_id);
+        initValues(view);
 
         gender.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
             @Override
@@ -151,8 +93,6 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                 }
             }
         });
-
-        RadioRealButtonGroup weather = view.findViewById(R.id.radioGroup_weather);
 
         if (hot == false)
         {
@@ -199,58 +139,27 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                                 SharedPreferences.Editor editor = sharedPref.edit();
                                 sqliteHelper = new SqliteHelper(mCtx);
 
-                                switch ((int) spiner.getSelectedItemId()) {
-                                    case 0:
-                                        physicalActivity = (float) 1.2;
-                                        break;
-                                    case 1:
-                                        physicalActivity = (float) 1.38;
-                                        break;
-                                    case 2:
-                                        physicalActivity = (float) 1.46;
-                                        break;
-                                    case 3:
-                                        physicalActivity = (float) 1.5;
-                                        break;
-                                    case 4:
-                                        physicalActivity = (float) 1.55;
-                                        break;
-                                    case 5:
-                                        physicalActivity = (float) 1.6;
-                                        break;
-                                    case 6:
-                                        physicalActivity = (float) 1.64;
-                                        break;
-                                    case 7:
-                                        physicalActivity = (float) 1.73;
-                                        break;
-                                    case 8:
-                                        physicalActivity = (float) 1.80;
-                                        break;
-                                    default:
-                                        physicalActivity = (float) 1;
-                                        break;
-                                }
-                                editor.putInt(AppUtils.getWeightKey(), Integer.parseInt(et_weight.getText().toString()));
-                                editor.putInt(AppUtils.getGrowthKey(), Integer.parseInt(et_growth.getText().toString()));
-                                editor.putInt(AppUtils.getAgeKey(), Integer.parseInt(et_age.getText().toString()));
-                                editor.putInt(AppUtils.getWorkTimeKey(), (int) spiner.getSelectedItemId());
-                                editor.putString(AppUtils.getSexKey(), sex);
-                                editor.putBoolean(AppUtils.getWeatherKey(), hot);
-                                editor.putBoolean(AppUtils.getMY_VALUES_KEY(), myValues);
+                                calculateActivity((int) spiner.getSelectedItemId());
+                                editor.putInt(AppUtils.WEIGHT_KEY, Integer.parseInt(et_weight.getText().toString()));
+                                editor.putInt(AppUtils.HEIGHT_KEY, Integer.parseInt(et_growth.getText().toString()));
+                                editor.putInt(AppUtils.AGE_KEY, Integer.parseInt(et_age.getText().toString()));
+                                editor.putInt(AppUtils.WORK_TIME_KEY, (int) spiner.getSelectedItemId());
+                                editor.putString(AppUtils.SEX_KEY, sex);
+                                editor.putBoolean(AppUtils.WEATHER_KEY, hot);
+                                editor.putBoolean(AppUtils.MY_VALUES_KEY, myValues);
                                 if (custSwitch.isChecked()) {
                                     et_cust_aet = cust_aet.getEditText();
                                     et_cust_water = cust_water.getEditText();
                                     if (currentWater == Integer.parseInt(et_cust_water.getText().toString())) {
 
                                     } else {
-                                        editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), Integer.parseInt(et_cust_water.getText().toString()));
+                                        editor.putInt(AppUtils.TOTAL_INTAKE_KEY_WATER, Integer.parseInt(et_cust_water.getText().toString()));
                                         sqliteHelper.updateTotalIntake(dateNow, Integer.parseInt(et_cust_water.getText().toString()), false);
                                     }
                                     if (currentEat == Integer.parseInt(et_cust_aet.getText().toString())) {
 
                                     } else {
-                                        editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), Integer.parseInt(et_cust_aet.getText().toString()));
+                                        editor.putInt(AppUtils.TOTAL_INTAKE_KEY_EAT, Integer.parseInt(et_cust_aet.getText().toString()));
                                         sqliteHelper.updateTotalIntake(dateNow, Integer.parseInt(et_cust_aet.getText().toString()), true);
                                     }
                                 } else {
@@ -259,14 +168,14 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                                     if (currentWater == (int) water) {
 
                                     } else {
-                                        editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), (int) water);
+                                        editor.putInt(AppUtils.TOTAL_INTAKE_KEY_WATER, (int) water);
                                         sqliteHelper.updateTotalIntake(dateNow, (int) water, false);
                                     }
 
                                     if (currentEat == (int) eat) {
 
                                     } else {
-                                        editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), (int) eat);
+                                        editor.putInt(AppUtils.TOTAL_INTAKE_KEY_EAT, (int) eat);
                                         sqliteHelper.updateTotalIntake(dateNow, (int) eat, true);
                                     }
                                 }
@@ -286,6 +195,102 @@ public final class FragmentUserSettings extends BottomSheetDialogFragment {
                 }
             }
         });
+    }
+
+    private void calculateActivity(int item) {
+        switch (item) {
+            case 0:
+                physicalActivity = (float) 1.2;
+                break;
+            case 1:
+                physicalActivity = (float) 1.38;
+                break;
+            case 2:
+                physicalActivity = (float) 1.46;
+                break;
+            case 3:
+                physicalActivity = (float) 1.5;
+                break;
+            case 4:
+                physicalActivity = (float) 1.55;
+                break;
+            case 5:
+                physicalActivity = (float) 1.6;
+                break;
+            case 6:
+                physicalActivity = (float) 1.64;
+                break;
+            case 7:
+                physicalActivity = (float) 1.73;
+                break;
+            case 8:
+                physicalActivity = (float) 1.80;
+                break;
+            default:
+                physicalActivity = (float) 1;
+                break;
+        }
+    }
+
+    private void initValues(View view) {
+        dateNow = AppUtils.getCurrentDate();
+        buttonOk = view.findViewById(R.id.buttonSettingsOK);
+        sharedPref = mCtx.getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
+        weight = view.findViewById(R.id.etWeight);
+        age = view.findViewById(R.id.etAge);
+        growth = view.findViewById(R.id.etGrowth2);
+        gender = view.findViewById(R.id.radioGroup_settings);
+        spiner = view.findViewById(R.id.physicalActivity_settings);
+        custSwitch = view.findViewById(R.id.switchCustom);
+        cust_water = view.findViewById(R.id.etCustom_water);
+        cust_aet = view.findViewById(R.id.etCustom_eat);
+
+        et_cust_aet = cust_aet.getEditText();
+        et_cust_water = cust_water.getEditText();
+        et_weight = weight.getEditText();
+        et_age = age.getEditText();
+        et_growth = growth.getEditText();
+        item_id = this.sharedPref.getInt(AppUtils.WORK_TIME_KEY, 0);
+        sex = this.sharedPref.getString(AppUtils.SEX_KEY, "Mężczyzna");
+        hot = this.sharedPref.getBoolean(AppUtils.WEATHER_KEY, false);
+        myValues = this.sharedPref.getBoolean(AppUtils.MY_VALUES_KEY, false);
+
+        switch (sex) {
+            case "Mężczyzna":
+                gender.setPosition(0);
+                break;
+            case "Kobieta":
+                gender.setPosition(1);
+                break;
+            default:
+                break;
+        }
+
+        if (myValues) {
+            custSwitch.setChecked(true);
+            cust_water.setEnabled(true);
+            cust_aet.setEnabled(true);
+        } else {
+            custSwitch.setChecked(false);
+            cust_water.setEnabled(false);
+            cust_aet.setEnabled(false);
+        }
+
+        currentWater = this.sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 0);
+        currentEat = this.sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 0);
+        StringBuilder sBilder1 = (new StringBuilder()).append("");
+        et_weight.setText((CharSequence) sBilder1.append(this.sharedPref.getInt(AppUtils.WEIGHT_KEY, 0)).toString());
+        StringBuilder sBilder2 = (new StringBuilder()).append("");
+        et_age.setText((CharSequence) sBilder2.append(this.sharedPref.getInt(AppUtils.AGE_KEY, 0)).toString());
+        StringBuilder sBilder3 = (new StringBuilder()).append("");
+        et_growth.setText((CharSequence) sBilder3.append(this.sharedPref.getInt(AppUtils.HEIGHT_KEY, 0)).toString());
+        StringBuilder sBilder4 = (new StringBuilder()).append("");
+        et_cust_water.setText((CharSequence) sBilder4.append(this.sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 0)).toString());
+        StringBuilder sBilder5 = (new StringBuilder()).append("");
+        et_cust_aet.setText((CharSequence) sBilder5.append(this.sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 0)).toString());
+
+        spiner.setSelection(item_id);
+        weather = view.findViewById(R.id.radioGroup_weather);
     }
 
 }

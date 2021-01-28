@@ -38,16 +38,8 @@ public class InitUserInfoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_init_user_info);
 
-        sharedPref = getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
-        weight = (TextInputLayout) findViewById(R.id.etWeight);
-        growth = findViewById(R.id.etGrowth);
-        age = findViewById(R.id.etAge);
-        workTime = findViewById(R.id.physicalActivity_init);
-        gender = findViewById(R.id.radioGroup_gender);
-        Button btnContinue = (Button) findViewById(R.id.btnContinue);
+        initValues();
 
-
-        gender.setPosition(0);
         gender.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
             @Override
             public void onClickedButton(RadioRealButton button, int position) {
@@ -63,10 +55,6 @@ public class InitUserInfoActivity extends AppCompatActivity {
                 }
             }
         });
-
-        weather = findViewById(R.id.radioGroup_weather);
-
-        weather.setPosition(0);
 
         weather.setOnClickedButtonListener(new RadioRealButtonGroup.OnClickedButtonListener() {
             @Override
@@ -84,6 +72,7 @@ public class InitUserInfoActivity extends AppCompatActivity {
             }
         });
 
+        Button btnContinue = (Button) findViewById(R.id.btnContinue);
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,38 +82,8 @@ public class InitUserInfoActivity extends AppCompatActivity {
                 et_weight = weight.getEditText();
                 et_growth = growth.getEditText();
                 et_age = age.getEditText();
-                switch ((int) workTime.getSelectedItemId()) {
-                    case 0:
-                        physicalActivity = (float) 1.2;
-                        break;
-                    case 1:
-                        physicalActivity = (float) 1.38;
-                        break;
-                    case 2:
-                        physicalActivity = (float) 1.46;
-                        break;
-                    case 3:
-                        physicalActivity = (float) 1.5;
-                        break;
-                    case 4:
-                        physicalActivity = (float) 1.55;
-                        break;
-                    case 5:
-                        physicalActivity = (float) 1.6;
-                        break;
-                    case 6:
-                        physicalActivity = (float) 1.64;
-                        break;
-                    case 7:
-                        physicalActivity = (float) 1.73;
-                        break;
-                    case 8:
-                        physicalActivity = (float) 1.80;
-                        break;
-                    default:
-                        physicalActivity = 1;
-                        break;
-                }
+
+                calculateActivity((int) workTime.getSelectedItemId());
 
                 if (et_weight.getText().toString().isEmpty() || et_growth.getText().toString().isEmpty() || et_age.getText().toString().isEmpty() || sex.isEmpty()) {
                     Toast.makeText(InitUserInfoActivity.this, "Wszystkie pola muszą być wypęłnione i zaznaczona płeć!", Toast.LENGTH_SHORT).show();
@@ -137,16 +96,16 @@ public class InitUserInfoActivity extends AppCompatActivity {
                                 double water,eat;
                                 water = AppUtils.calculate(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),false, hot);
                                 eat = AppUtils.calculate(sex, Integer.parseInt(et_weight.getText().toString()), physicalActivity, Integer.parseInt(et_growth.getText().toString()),Integer.parseInt(et_age.getText().toString()),true, hot);
-                                editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), (int) water);
-                                editor.putInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), (int) eat);
-                                editor.putInt(AppUtils.getWeightKey(), Integer.parseInt(et_weight.getText().toString()));
-                                editor.putInt(AppUtils.getGrowthKey(), Integer.parseInt(et_growth.getText().toString()));
-                                editor.putInt(AppUtils.getAgeKey(), Integer.parseInt(et_age.getText().toString()));
-                                editor.putInt(AppUtils.getWorkTimeKey(), (int) workTime.getSelectedItemId());
-                                editor.putString(AppUtils.getSexKey(), sex);
-                                editor.putBoolean(AppUtils.getWeatherKey(), hot);
-                                editor.putBoolean(AppUtils.getMY_VALUES_KEY(), false);
-                                editor.putBoolean(AppUtils.getFirstRunKey(), false);
+                                editor.putInt(AppUtils.TOTAL_INTAKE_KEY_WATER, (int) water);
+                                editor.putInt(AppUtils.TOTAL_INTAKE_KEY_EAT, (int) eat);
+                                editor.putInt(AppUtils.WEIGHT_KEY, Integer.parseInt(et_weight.getText().toString()));
+                                editor.putInt(AppUtils.HEIGHT_KEY, Integer.parseInt(et_growth.getText().toString()));
+                                editor.putInt(AppUtils.AGE_KEY, Integer.parseInt(et_age.getText().toString()));
+                                editor.putInt(AppUtils.WORK_TIME_KEY, (int) workTime.getSelectedItemId());
+                                editor.putString(AppUtils.SEX_KEY, sex);
+                                editor.putBoolean(AppUtils.WEATHER_KEY, hot);
+                                editor.putBoolean(AppUtils.MY_VALUES_KEY, false);
+                                editor.putBoolean(AppUtils.FIRST_RUN_KEY, false);
                                 editor.apply();
                                 //Snackbar.make(v, "Ja workaju!", Snackbar.LENGTH_SHORT).show();
                                 startActivity(new Intent(InitUserInfoActivity.this, MainActivity.class));
@@ -163,5 +122,52 @@ public class InitUserInfoActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void initValues() {
+        sharedPref = getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
+        weight = (TextInputLayout) findViewById(R.id.etWeight);
+        growth = findViewById(R.id.etGrowth);
+        age = findViewById(R.id.etAge);
+        workTime = findViewById(R.id.physicalActivity_init);
+        gender = findViewById(R.id.radioGroup_gender);
+        gender.setPosition(0);
+        weather = findViewById(R.id.radioGroup_weather);
+        weather.setPosition(0);
+    }
+
+    private void calculateActivity(int item) {
+        switch (item) {
+            case 0:
+                physicalActivity = (float) 1.2;
+                break;
+            case 1:
+                physicalActivity = (float) 1.38;
+                break;
+            case 2:
+                physicalActivity = (float) 1.46;
+                break;
+            case 3:
+                physicalActivity = (float) 1.5;
+                break;
+            case 4:
+                physicalActivity = (float) 1.55;
+                break;
+            case 5:
+                physicalActivity = (float) 1.6;
+                break;
+            case 6:
+                physicalActivity = (float) 1.64;
+                break;
+            case 7:
+                physicalActivity = (float) 1.73;
+                break;
+            case 8:
+                physicalActivity = (float) 1.80;
+                break;
+            default:
+                physicalActivity = 1;
+                break;
+        }
     }
 }

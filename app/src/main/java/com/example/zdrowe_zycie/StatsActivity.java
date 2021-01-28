@@ -54,7 +54,7 @@ public class StatsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         final boolean flagEat = intent.getBooleanExtra("key", false);
 
-        sharedPref = this.getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
+        sharedPref = this.getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
         sqliteHelper = new SqliteHelper((Context) this);
         mainLayout = findViewById(R.id.mainLayout);
         LevelView = findViewById(R.id.LevelView);
@@ -145,11 +145,10 @@ public class StatsActivity extends AppCompatActivity {
 
     private void setTarget(boolean flagEat) {
         TextView targetIntake = findViewById(R.id.targetIntake);
-        if (flagEat) {
-            targetIntake.setText(sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) + " kkal");
-        } else {
-            targetIntake.setText(sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) + " ml");
-        }
+        if (flagEat)
+            targetIntake.setText(sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 1) + " kkal");
+        else
+            targetIntake.setText(sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 1) + " ml");
     }
 
     private void setRemaining(boolean flagEat) {
@@ -157,11 +156,11 @@ public class StatsActivity extends AppCompatActivity {
         int remaining;
         String unit;
         if (flagEat) {
-            remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_EAT(), 1) -
+            remaining = sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_EAT, 1) -
                     sqliteHelper.getIntake(AppUtils.getCurrentDate(), flagEat);
             unit = "kkal";
         } else {
-            remaining = sharedPref.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1) -
+            remaining = sharedPref.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 1) -
                     sqliteHelper.getIntake(AppUtils.getCurrentDate(), flagEat);
             unit = "ml";
         }

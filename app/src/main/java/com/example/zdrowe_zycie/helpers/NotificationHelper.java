@@ -36,9 +36,9 @@ public final class NotificationHelper {
 
     private final void createChannels() {
         if (VERSION.SDK_INT >= 26) {
-            SharedPreferences prefs = context.getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
+            SharedPreferences prefs = context.getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
             String MessageRingtone = prefs.getString(
-                    AppUtils.getNOTIFICATION_TONE_URI_KEY(),
+                    AppUtils.NOTIFICATION_TONE_URI_KEY,
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION
                     ).toString()
             );
@@ -92,10 +92,10 @@ public final class NotificationHelper {
     }
 
     private final boolean shallNotify() {
-        SharedPreferences prefs = context.getSharedPreferences(AppUtils.getUSERS_SHARED_PREF(), AppUtils.getPRIVATE_MODE());
+        SharedPreferences prefs = context.getSharedPreferences(AppUtils.USERS_SHARED_PREF, AppUtils.PRIVATE_MODE);
         SqliteHelper sqliteHelper = new SqliteHelper(context);
         int percent = sqliteHelper.getIntake(AppUtils.getCurrentDate(),false) * 100 /
-                prefs.getInt(AppUtils.getTOTAL_INTAKE_KEY_WATER(), 1);
+                prefs.getInt(AppUtils.TOTAL_INTAKE_KEY_WATER, 1);
         boolean doNotDisturbOff = true;
             Date now = Calendar.getInstance().getTime();
             Date start = new Date(2000,1,1,8,00);

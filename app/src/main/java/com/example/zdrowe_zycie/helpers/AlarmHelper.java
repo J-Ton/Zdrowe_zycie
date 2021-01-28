@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 
 import com.example.zdrowe_zycie.recievers.BootReceiver;
 import com.example.zdrowe_zycie.recievers.NotifierReceiver;
+
 import java.util.concurrent.TimeUnit;
 
 public final class AlarmHelper {
@@ -26,7 +27,7 @@ public final class AlarmHelper {
                 alarmIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT
         );
-        if (alarmManager!= null) {
+        if (alarmManager != null) {
             alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
                     System.currentTimeMillis(),
@@ -45,27 +46,27 @@ public final class AlarmHelper {
 
     public final void cancelAlarm(Context context) {
 
-        alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-            Intent alarmIntent = new Intent(context, NotifierReceiver.class);
-            alarmIntent.setAction(this.ACTION_BD_NOTIFICATION);
-            PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(
-                    context,
-                    0,
-                    alarmIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT
-            );
-            if (alarmManager != null) {
-                alarmManager.cancel(pendingAlarmIntent);
-            }
-            /* Alarm won't start again if device is rebooted */
-            ComponentName receiver = new ComponentName(context, BootReceiver.class);
-            PackageManager pm = context.getPackageManager();
-            pm.setComponentEnabledSetting(receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP
-            );
+        Intent alarmIntent = new Intent(context, NotifierReceiver.class);
+        alarmIntent.setAction(this.ACTION_BD_NOTIFICATION);
+        PendingIntent pendingAlarmIntent = PendingIntent.getBroadcast(
+                context,
+                0,
+                alarmIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        if (alarmManager != null) {
+            alarmManager.cancel(pendingAlarmIntent);
         }
+        /* Alarm won't start again if device is rebooted */
+        ComponentName receiver = new ComponentName(context, BootReceiver.class);
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                PackageManager.DONT_KILL_APP
+        );
+    }
 
     public final boolean checkAlarm(Context context) {
         Intent alarmIntent = new Intent(context, NotifierReceiver.class);
